@@ -9,6 +9,7 @@
 #include "HAL/FileManager.h"
 #include "HAL/FileManagerGeneric.h"
 #include "Resources/Version.h"
+#include "AI/Navigation/NavAreaBase.h"
 
 FExternRecastGeometryCache::FExternRecastGeometryCache(const uint8* Memory)
 {
@@ -32,7 +33,7 @@ void FExternExportNavMeshGenerator::ExternExportNavigationData(const FString& Fi
 	FString CurrentTimeStr = FDateTime::Now().ToString();
 	for (int32 Index = 0; Index < NavSys->NavDataSet.Num(); ++Index)
 	{
-		// feed data from octtree and mark for rebuild				
+		// feed data from octtree and mark for rebuild
 		TNavStatArray<dtReal> CoordBuffer;
 		TNavStatArray<int32> IndexBuffer;
 		const ARecastNavMesh* NavData = Cast<const ARecastNavMesh>(NavSys->NavDataSet[Index]);
@@ -88,7 +89,7 @@ void FExternExportNavMeshGenerator::ExternExportNavigationData(const FString& Fi
 							};
 							case EExportMode::Centimeter:
 								{
-									// Export unit centimeters 
+									// Export unit centimeters
 									for (int32 i = 0; i < CachedGeometry.Header.NumVerts * 3; i++)
 									{
 										CoordBuffer.Add(CachedGeometry.Verts[i]);
@@ -221,7 +222,7 @@ void FExternExportNavMeshGenerator::ExternExportNavigationData(const FString& Fi
 					AdditionalData += FString::Printf(TEXT("rd_agr %5.5f\n"), CurrentGen->GetConfig().AgentRadius);
 					AdditionalData += FString::Printf(TEXT("# Agent max climb\n"));
 					AdditionalData += FString::Printf(TEXT("rd_amc %5.5f\n"), (int)CurrentGen->GetConfig().AgentMaxClimb);
-			
+
 					AdditionalData += FString::Printf(TEXT("# border size\n"));
 					AdditionalData += FString::Printf(TEXT("rd_bs %d\n"), (int)CurrentGen->GetConfig().borderSize);
 					AdditionalData += FString::Printf(TEXT("# Max edge len\n"));
@@ -231,9 +232,9 @@ void FExternExportNavMeshGenerator::ExternExportNavigationData(const FString& Fi
 
 
 					AdditionalData += FString::Printf(TEXT("# Region min size\n"));
-					AdditionalData += FString::Printf(TEXT("rd_rmis %d\n"), (uint32)FMath::Sqrt(CurrentGen->GetConfig().minRegionArea));
+					AdditionalData += FString::Printf(TEXT("rd_rmis %d\n"), (uint32)FMath::Sqrt((double)CurrentGen->GetConfig().minRegionArea));
 					AdditionalData += FString::Printf(TEXT("# Region merge size\n"));
-					AdditionalData += FString::Printf(TEXT("rd_rmas %d\n"), (uint32)FMath::Sqrt(CurrentGen->GetConfig().mergeRegionArea));
+					AdditionalData += FString::Printf(TEXT("rd_rmas %d\n"), (uint32)FMath::Sqrt((double)CurrentGen->GetConfig().mergeRegionArea));
 
 					AdditionalData += FString::Printf(TEXT("# maxVertsPerPoly\n"));
 					AdditionalData += FString::Printf(TEXT("rd_mvpp %d\n"), CurrentGen->GetConfig().maxVertsPerPoly);
@@ -243,7 +244,7 @@ void FExternExportNavMeshGenerator::ExternExportNavigationData(const FString& Fi
 					AdditionalData += FString::Printf(TEXT("rd_dsm %5.5f\n"), CurrentGen->GetConfig().detailSampleMaxError);
 					AdditionalData += FString::Printf(TEXT("# PolyMaxHeight\n"));
 		#if ENGINE_MINOR_VERSION < 24
-					AdditionalData += FString::Printf(TEXT("rd_pmh %d\n"), CurrentGen->GetConfig().PolyMaxHeight);
+					//AdditionalData += FString::Printf(TEXT("rd_pmh %d\n"), CurrentGen->GetConfig().PolyMaxHeight);
 		#endif
 					AdditionalData += FString::Printf(TEXT("# minRegionArea\n"));
 					AdditionalData += FString::Printf(TEXT("rd_minra %d\n"), CurrentGen->GetConfig().minRegionArea);
